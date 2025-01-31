@@ -16,6 +16,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
+import java.net.URI;
 import java.util.Optional;
 
 @Service
@@ -47,17 +48,16 @@ public class TranslateServiceImpl implements TranslateService{
             parameters.add("text", pokemon.getDescription());
 
             try {
+                URI uri = new URI(url);
+                ResponseEntity<String> responseTranslate = restTemplate.postForEntity(uri,parameters, String.class);
 
-            ResponseEntity<String> responseTranslate = restTemplate.postForEntity(url,parameters, String.class);
-
-            ObjectMapper objectMapper = new ObjectMapper();
-
+                ObjectMapper objectMapper = new ObjectMapper();
 
                 JsonNode rootNode = objectMapper.readTree(responseTranslate.getBody());
 
                 Optional.ofNullable(rootNode.get(CONTENTS).get(TRANSLATED))
                         .map(JsonNode::asText)
-                        .filter(name -> !name.isEmpty())
+                        .filter(translatedText -> !translatedText.isEmpty())
                         .orElseThrow(() -> new PokemonTranslateException("Errore durante traduzione della descrizione"));
 
                 pokemon.setDescription(rootNode.get(CONTENTS).get(TRANSLATED).asText());
@@ -66,10 +66,10 @@ public class TranslateServiceImpl implements TranslateService{
 
             } catch (Exception e) {
                 logger.error(e.getMessage());
-                return null;
+                return pokemon;
             }
         }
         else
-            return null;
+            return pokemon;
     }
 }
