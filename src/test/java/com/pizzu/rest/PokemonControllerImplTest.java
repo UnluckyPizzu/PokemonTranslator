@@ -11,7 +11,7 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import com.pizzu.utils.GeneralResponse;
 
 @ExtendWith(MockitoExtension.class)
 public class PokemonControllerImplTest {
@@ -31,11 +31,11 @@ public class PokemonControllerImplTest {
 
         Mockito.when(pokemonService.getPokemonTranslatedDescriptionByName(Mockito.anyString())).thenReturn(pokemon);
 
-        ResponseEntity<Pokemon> result = pokemonController.getPokemonInfo("test");
+        GeneralResponse<Pokemon> result = pokemonController.getPokemonInfo("test");
 
         Assertions.assertNotNull(result.getBody());
 
-        Assertions.assertEquals(result.getStatusCode(), HttpStatus.OK);
+        Assertions.assertEquals(result.getStatus(), HttpStatus.OK);
     }
 
     @Test
@@ -44,11 +44,11 @@ public class PokemonControllerImplTest {
 
         Mockito.when(pokemonService.getPokemonTranslatedDescriptionByName(Mockito.anyString())).thenReturn(null);
 
-        ResponseEntity<Pokemon> result = pokemonController.getPokemonInfo("test");
+        GeneralResponse<Pokemon> result = pokemonController.getPokemonInfo("test");
 
         Assertions.assertNull(result.getBody());
 
-        Assertions.assertEquals(result.getStatusCode(), HttpStatus.INTERNAL_SERVER_ERROR);
+        Assertions.assertEquals(result.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @Test
@@ -58,11 +58,11 @@ public class PokemonControllerImplTest {
         Mockito.when(translateService.getTranslatePokemon(Mockito.any(Pokemon.class))).thenReturn(pokemon);
 
 
-        ResponseEntity<Pokemon> result = pokemonController.getPokemonInfoTranslated("test");
+        GeneralResponse<Pokemon> result = pokemonController.getPokemonInfoTranslated("test");
 
         Assertions.assertNotNull(result.getBody());
 
-        Assertions.assertEquals(result.getStatusCode(), HttpStatus.OK);
+        Assertions.assertEquals(result.getStatus(), HttpStatus.OK);
     }
 
     @Test
@@ -70,11 +70,11 @@ public class PokemonControllerImplTest {
         Mockito.when(pokemonService.getPokemonTranslatedDescriptionByName(Mockito.anyString())).thenReturn(null);
         Mockito.when(translateService.getTranslatePokemon(Mockito.any())).thenReturn(null);
 
-        ResponseEntity<Pokemon> result = pokemonController.getPokemonInfoTranslated("test");
+        GeneralResponse<Pokemon> result = pokemonController.getPokemonInfoTranslated("test");
 
         Assertions.assertNull(result.getBody());
 
-        Assertions.assertEquals(result.getStatusCode(), HttpStatus.INTERNAL_SERVER_ERROR);
+        Assertions.assertEquals(result.getStatus(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

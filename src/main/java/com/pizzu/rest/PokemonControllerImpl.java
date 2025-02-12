@@ -3,6 +3,7 @@ package com.pizzu.rest;
 import com.pizzu.model.Pokemon;
 import com.pizzu.service.PokemonService;
 import com.pizzu.service.TranslateService;
+import com.pizzu.utils.GeneralResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,28 +24,29 @@ public class PokemonControllerImpl implements PokemonController {
     private Logger logger = LoggerFactory.getLogger(PokemonControllerImpl.class);
 
     @GetMapping(value = "/pokemon/{pokemonName}")
-    public ResponseEntity<Pokemon> getPokemonInfo(@PathVariable(value = "pokemonName") String name) {
+    public GeneralResponse<Pokemon> getPokemonInfo(@PathVariable(value = "pokemonName") String name) {
         Pokemon pokemon = pokemonService.getPokemonTranslatedDescriptionByName(name);
 
         if (pokemon == null) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new GeneralResponse<Pokemon>(HttpStatus.INTERNAL_SERVER_ERROR,"Error during getPokemonInfo",null);
         }
         else
         {
-            return new ResponseEntity<>(pokemon, HttpStatus.OK);
+            return new GeneralResponse<Pokemon>(HttpStatus.OK,"Pokemon found",pokemon);
+
         }
     }
 
     @GetMapping(value = "/pokemon/translated/{pokemonName}")
-    public ResponseEntity<Pokemon> getPokemonInfoTranslated(@PathVariable(value = "pokemonName") String name) {
+    public GeneralResponse<Pokemon> getPokemonInfoTranslated(@PathVariable(value = "pokemonName") String name) {
         Pokemon pokemon = translateService.getTranslatePokemon(pokemonService.getPokemonTranslatedDescriptionByName(name));
 
         if (pokemon == null) {
-            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+            return new GeneralResponse<Pokemon>(HttpStatus.INTERNAL_SERVER_ERROR,"Error during getPokemonInfoTranslated",null);
         }
         else
         {
-            return new ResponseEntity<>(pokemon, HttpStatus.OK);
+            return new GeneralResponse<Pokemon>(HttpStatus.OK,"Pokemon found and translated",pokemon);
         }
 
     }
